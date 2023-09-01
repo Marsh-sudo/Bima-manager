@@ -5,6 +5,7 @@ from .models import Client,Reminder,Policy
 from .permissions import IsAuthorOrReadOnly
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework import viewsets
 
 # Create your views here.
 class ClientList(generics.ListCreateAPIView): 
@@ -24,24 +25,42 @@ class ClientDetail(generics.RetrieveUpdateDestroyAPIView):
 
 class ClientPolicyList(generics.ListCreateAPIView):
     serializer_class = PolicySerializer
-    permission_classes = (IsAuthorOrReadOnly,)
+   
 
     def get_queryset(self):
-        user = self.request.user
-        return Policy.objects.filter(client__created_by=user)
+        client_pk = self.kwargs.get('pk')
+        print(self.kwargs)
+        print(client_pk)
+        queryset = Policy.objects.filter(client__id=client_pk)
+        print(queryset.count())
+        return queryset
+
     
 
 
-class PolicyDetail(generics.RetrieveUpdateDestroyAPIView):
+class PolicyDetail(generics.RetrieveUpdateAPIView):
     serializer_class = PolicySerializer
     permission_classes = (IsAuthorOrReadOnly,)
+    lookup_url_kwarg = "policy_id"
 
-    def get_queryset(self):
-        client_pk = self.kwargs.get('client_id')
-        return Policy.objects.filter(client_id=client_pk)
+    queryset=Policy.objects
 
-    @action(detail=True, methods=['GET'], url_path='policy/(?P<policy_pk>\d+)')
-    def single_policy(self, request, client_id, policy_pk):
-        policy = Policy.objects.get(client_id=client_id, pk=policy_pk)
-        serializer = PolicySerializer(policy)
-        return Response(serializer.data)
+    # def get_queryset(self):
+    #     client_pk = self.kwargs.get('policy_id')
+    #     print(self.allowed_methods)
+    #     return Policy.objects.filter(pk=client_pk)
+
+    # @action(detail=True, methods=['GET'], url_path='policy/(?P<policy_pk>\d+)')
+    # def single_policy(self, request, client_id, policy_pk):
+    #     policy = Policy.objects.get(client_id=client_id, pk=policy_pk)
+    #     serializer = PolicySerializer(policy)
+    #     return Response(serializer.data)
+
+class PolicyDetailViewSet(viewsets.ModelViewSet):
+    """
+    A simple ViewSet for viewing and editing accounts.
+    """
+    serializer_class = PolicySerializer
+    lookup_url_kwarg = "policy_id"
+
+    queryset=Policy.objects
