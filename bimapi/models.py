@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 class SalesPerson(models.Model):
+    user = models.OneToOneField(User, null=True, blank=True, on_delete=models.CASCADE)
     username = models.CharField(max_length=65)
     first_name = models.CharField(max_length=60)
     last_name = models.CharField(max_length=51)

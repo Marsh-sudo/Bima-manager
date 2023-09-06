@@ -6,16 +6,21 @@ from .permissions import IsAuthorOrReadOnly
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import viewsets
+from rest_framework import filters
 
 # Create your views here.
 class ClientList(generics.ListCreateAPIView): 
     queryset = Client.objects.all() 
     serializer_class = ClientSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['first_name', 'email']
 
 class ClientDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (IsAuthorOrReadOnly,)
     queryset = Client.objects.all()
     serializer_class = ClientSerializer
+    permission_classes = (permissions.IsAuthenticated,)
 
 # class PolicyDetail(generics.RetrieveUpdateDestroyAPIView):
 #     permission_classes = (IsAuthorOrReadOnly,)  # new 
@@ -25,25 +30,26 @@ class ClientDetail(generics.RetrieveUpdateDestroyAPIView):
 
 class ClientPolicyList(generics.ListCreateAPIView):
     serializer_class = PolicySerializer
+    permission_classes = (permissions.IsAuthenticated,)
    
 
     def get_queryset(self):
         client_pk = self.kwargs.get('pk')
         print(self.kwargs)
-        print(client_pk)
         queryset = Policy.objects.filter(client__id=client_pk)
         print(queryset.count())
         return queryset
-
+    
     
 
+  
 
-class PolicyDetail(generics.RetrieveUpdateAPIView):
-    serializer_class = PolicySerializer
-    permission_classes = (IsAuthorOrReadOnly,)
-    lookup_url_kwarg = "policy_id"
+# class PolicyDetail(generics.RetrieveUpdateAPIView):
+#     serializer_class = PolicySerializer
+#     permission_classes = (IsAuthorOrReadOnly,)
+#     lookup_url_kwarg = "policy_id"
 
-    queryset=Policy.objects
+#     queryset=Policy.objects
 
     # def get_queryset(self):
     #     client_pk = self.kwargs.get('policy_id')
@@ -58,9 +64,15 @@ class PolicyDetail(generics.RetrieveUpdateAPIView):
 
 class PolicyDetailViewSet(viewsets.ModelViewSet):
     """
-    A simple ViewSet for viewing and editing accounts.
+    A simple ViewSet for viewing and editing single policies owned by a client.
     """
     serializer_class = PolicySerializer
     lookup_url_kwarg = "policy_id"
-
     queryset=Policy.objects
+
+
+class SearchApiView(generics.ListAPIView):
+    queryset = Client.objects.all()
+    serializer_class = ClientSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['first_name', 'email']
