@@ -37,9 +37,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
 
     'bimapi',
+
     'rest_framework',
+    'rest_framework.authtoken',
+    'allauth', # new
+    'allauth.account', # new
+    'allauth.socialaccount', 
+    'dj_rest_auth.registration',
+    'dj_rest_auth',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
@@ -78,9 +87,26 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'bima',
+        'USER':'biggie',
+        'PASSWORD':'123456',
     }
+}
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_FILTER_BACKENDS': (
+        'django_filters.rest_framework.DjangoFilterBackend',
+        
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': [ # new
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication'
+    ],
+    
 }
 
 
@@ -126,3 +152,8 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' # new
+
+SITE_ID = 1 # new
