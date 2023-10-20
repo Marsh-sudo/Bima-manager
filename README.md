@@ -35,7 +35,7 @@ To run this API on your local machine, follow these steps:
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/yourusername/insurance-management-api.git
+   git clone https://github.com/yourusername/Bima-manager.git
 
 2. Navigate to the project directory
 
