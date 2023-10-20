@@ -41,11 +41,11 @@ INSTALLED_APPS = [
 
     'bimapi',
 
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount', 
     'rest_framework',
     'rest_framework.authtoken',
-    'allauth', # new
-    'allauth.account', # new
-    'allauth.socialaccount', 
     'dj_rest_auth.registration',
     'dj_rest_auth',
     'django_filters',
